@@ -5,7 +5,7 @@ import ApiError from './error/ApiError.js';
 class TypeController {
     async post(req, res) {
         const {name} = req.body
-        const brand = await Type.create({name})
+        const type = await Type.create({name}).catch(e => { throw new Error(e.message) })
         return res.json(type)
     }
 
