@@ -13,11 +13,12 @@ class DeviceController {
             const { name, price, brandId, typeId, info } = req.body;
             const { img } = req.files;
             let fileName = uuidv4() + ".jpg";
-            const device = await Device.create({ name, price, brandId, typeId, img: fileName });
+            const device = await Device.create({ name, price, brandId, typeId, img: fileName })
+                .catch(e => { console.log('DEVICE ERROR:', e.message); throw e; });
 
             if(info) {
-                info = JSON.parse(info)
-                info.forEach(i => {
+                const parsedInfo = JSON.parse(info)
+                parsedInfo.forEach(i => {
                     DeviceInfo.create({
                         title: i.title,
                         description: i.description,
@@ -27,7 +28,6 @@ class DeviceController {
             }
 
             img.mv(path.resolve(__dirname, "..", "static", fileName));
-
 
             return res.json(device);
         } catch (e) {

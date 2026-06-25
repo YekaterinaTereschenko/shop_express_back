@@ -14,8 +14,8 @@ const generateJwt = (id, email, role) => {
 
 class UserController {
     async registration(req, res, next) {
-        const {email, password, role} = req.body
-        if(!email || !password) {
+        const {email, password, phone, address, role, name} = req.body
+        if(!email || !password || !phone || !address || !name) {
             return next(console.log('Registration Error'))
         }
 
@@ -24,7 +24,7 @@ class UserController {
             return next(console.log('already exist'))
         }
         const hashPassword = await bcrypt.hash(password, 5)
-        const user = await User.create({email, role, password: hashPassword})
+        const user = await User.create({email, role, name, phone, address, password: hashPassword})
         const basket = await Basket.create({userId: user.id})
         const token = generateJwt(user.id, email, role)
         return res.json({token})
@@ -42,6 +42,31 @@ class UserController {
         }
         const token = generateJwt(user.id, user.email, user.role)
         return res.json({token})
+    }
+
+    async getUser(req, res) {
+        const { id } = req.user
+
+        const user = await User.findOne({
+            where: { id },
+            attributes: ['id', 'email', 'phone', 'address', 'role', 'name']
+        })
+
+        return res.json(user)
+    }
+
+    async updateUser(req, res, next) {
+        const { id } = req.user
+        const { name, phone, address } = req.body
+
+        const user = await User.findOne({ where: { id } })
+        if (!user) {
+            return next(ApiError.badRequest('Пользователь не найден'))
+        }
+
+        await user.update({ name, phone, address })
+
+        return res.json({ message: 'Данные обновлены', user })
     }
 
     async check(req, res, next) {

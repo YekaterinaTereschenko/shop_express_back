@@ -17,6 +17,15 @@ const User = sequelize.define('user', {
     password: {
         type: DataTypes.STRING
     },
+    name: {
+        type: DataTypes.STRING
+    },
+    address: {
+        type: DataTypes.STRING
+    },
+    phone: {
+        type: DataTypes.STRING
+    },
     role: {
         type: DataTypes.STRING,
         defaultValue: 'USER'
@@ -37,7 +46,12 @@ const BasketDevice = sequelize.define('basket_device', {
         primaryKey: true,
         autoIncrement: true
     },
+    quantity: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1
+    }
 })
+
 
 const Device = sequelize.define('device', {
     id: {
@@ -109,6 +123,10 @@ const DeviceInfo = sequelize.define('device_info', {
         autoIncrement: true
     },
     title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    description: {
         type: DataTypes.STRING,
         allowNull: false
     },
